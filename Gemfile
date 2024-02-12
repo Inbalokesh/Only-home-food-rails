@@ -11,6 +11,11 @@ gem 'mysql2', "~>0.3.10"
 
 gem 'byebug'
 
+gem 'bcrypt'
+
+# gem 'bcrypt-ruby', '~> 3.0.0'
+
+
 gem 'test-unit', '~> 3.0'
 
 # Gems used only for assets and not required
@@ -41,3 +46,4 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'debugger'
+

@@ -57,10 +57,16 @@ LibraryManagementApp::Application.routes.draw do
   # match ':controller(/:action(/:id))(.:format)'
 
   get "/product/cook/:id", to:"product#show_cook_foods"
+
+  get "/order/user/:id", to:"order#show_user_orders"
+
+  post "/login", to:"session#create"
+
+  put "/admin/create/:id", to:"user#update_role"
   
-  resources :user
+  resources :user, only: [:index, :create, :show, :update, :destroy, :team]
   resources :cook
   resources :product
-
+  resources :order
 
 end

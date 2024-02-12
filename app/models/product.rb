@@ -4,6 +4,9 @@ class Product < ActiveRecord::Base
 
   belongs_to :cook
 
+  has_many :orders
+  has_many :users, through: :orders
+
   validates :name, format: { with: /\A[a-zA-Z\s]+\z/, message: "only allows letters and spaces" }
   validates :quantity_type, format: { with: /\A[a-zA-Z\s]+\z/, message: "only allows letters and spaces" }
   validates :food_type, inclusion: { in: ['Veg', 'Non-Veg'], message: "%{value} is not a valid food type" }
@@ -12,7 +15,7 @@ class Product < ActiveRecord::Base
   validates :quantity, numericality: { only_integer: true, message: "must be an integer" }
   validates :quantity, inclusion: { in: 1..1000, message: "must be between 1 and 1000" }
   validates :stock, numericality: { only_integer: true, message: "must be an integer" }
-  validates :stock, inclusion: { in: 1..100, message: "must be between 1 and 100" }
+  validates :stock, inclusion: { in: 0..100, message: "must be between 1 and 100" }
   validates :cook_id, numericality: { only_integer: true, message: "must be an integer" }
 
 end

@@ -4,7 +4,7 @@ class CreateUsers < ActiveRecord::Migration
       t.integer :id, auto_increment: true
       t.string :name
       t.string :mobile_number
-      t.string :password
+      t.string :password_digest
 
       t.timestamps
     end

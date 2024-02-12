@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20240209090123) do
+ActiveRecord::Schema.define(:version => 20240212132355) do
 
   create_table "cooks", :force => true do |t|
     t.string   "first_name"
@@ -20,15 +20,26 @@ ActiveRecord::Schema.define(:version => 20240209090123) do
     t.datetime "updated_at", :null => false
   end
 
-  create_table "products", :id => false, :force => true do |t|
-    t.integer  "id"
-    t.string   "name"
-    t.string   "type"
-    t.string   "quantity_type"
-    t.integer  "quantity"
-    t.integer  "stock"
-    t.integer  "price"
-    t.integer  "cook_id"
+  create_table "orders", :force => true do |t|
+    t.string   "order_status",     :null => false
+    t.string   "address",          :null => false
+    t.integer  "quantity_ordered", :null => false
+    t.datetime "delivery_time",    :null => false
+    t.integer  "product_id",       :null => false
+    t.integer  "user_id",          :null => false
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+    t.integer  "total_price",      :null => false
+  end
+
+  create_table "products", :force => true do |t|
+    t.string   "name",          :null => false
+    t.string   "food_type",     :null => false
+    t.string   "quantity_type", :null => false
+    t.integer  "quantity",      :null => false
+    t.integer  "stock",         :null => false
+    t.integer  "price",         :null => false
+    t.integer  "cook_id",       :null => false
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
   end
@@ -36,9 +47,10 @@ ActiveRecord::Schema.define(:version => 20240209090123) do
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "mobile_number"
-    t.string   "password"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.string   "password_digest"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.boolean  "role"
   end
 
   add_index "users", ["mobile_number"], :name => "mobile_number_UNIQUE", :unique => true

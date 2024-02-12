@@ -31,7 +31,7 @@ class ProductController < ApplicationController
     end
 
     #Update Product
-     def update
+    def update
         begin
             @product = Product.find(params[:id])
             if @product.update_attributes(params[:product])
@@ -63,7 +63,7 @@ class ProductController < ApplicationController
     end
 
     private
-    # Validating while create the product
+    # Validating while creating the product
     def validate_product
         begin
             cook = Cook.find(params[:cook_id]) # Finding if the cook exist
