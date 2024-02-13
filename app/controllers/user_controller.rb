@@ -1,17 +1,17 @@
 class UserController < ApplicationController
-
+    skip_before_filter :check_is_admin, only: [:create, :update, :show]
     # View all users
     def index
-        # @current_user = current_user.id
         @users = User.all
-        render json: @users
+        render json: {user:@users}
     end
 
     # Create user
     def create
         @user = User.new(user_params)
+        @user.is_admin = false
         if @user.save
-            render json:{message:"user created", user: @user}
+            render json:{message:"User created", user: @user}
         else
             if @user.errors.full_messages.include?("Duplicate entry")
                 render json: { message: "Mobile number already exists" }
@@ -23,8 +23,14 @@ class UserController < ApplicationController
 
     #Show User as per Id
     def show
-        @user = User.find(params[:id])
-        render json: @user
+        begin 
+            @user = User.find(params[:id])
+            render json: @user
+         rescue ActiveRecord::RecordNotFound
+            render text: "User Id not found", status: :not_found
+         rescue => e
+            render text: "An error occurred: #{e.message}", status: :unprocessable_entity
+        end
     end
 
     #Update User
@@ -63,14 +69,14 @@ class UserController < ApplicationController
         end
     end
 
-    # Update Role
-    def update_role
+    # Make Admin
+    def make_admin
         begin
             user = User.find(params[:id])
-            if user.role
+            if user.is_admin
                 render text: "He is already an admin"
             else
-                if user.update_attributes(role: true)
+                if user.update_attributes(is_admin: true)
                     render json: {Message:"#{user.name} is admin now"}
                 else
                     render json: {Error:user.errors.full_messages, status:"not found"}
@@ -86,6 +92,6 @@ class UserController < ApplicationController
     private
     # Get all the user details from the params
     def user_params
-        params.slice(:name, :mobile_number, :password, :role)
+        params.slice(:name, :mobile_number, :password, :is_admin, :email)
     end
 end

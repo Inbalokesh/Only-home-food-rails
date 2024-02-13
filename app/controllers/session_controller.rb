@@ -3,7 +3,7 @@ class SessionController < ApplicationController
         user = User.find_by_mobile_number(params[:mobile_number])
         if user && user.authenticate(params[:password])
             session[:current_user] = user.id
-            render text: "Sucessfully login"
+            render json: {message:"Sucessfully Login", current_user: current_user.id}
         else
             render text: "Invalid login credentails"
         end

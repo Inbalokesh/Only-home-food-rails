@@ -1,4 +1,5 @@
 class ProductController < ApplicationController
+    skip_before_filter :check_is_admin, only: [:index, :show, :show_cook_foods]
     before_filter :validate_product, only: [:create, :update]
 
     # View all products
@@ -9,7 +10,7 @@ class ProductController < ApplicationController
 
     # Create product
     def create
-        @product = Product.new(product_params) # Set new product with the details from the params
+        @product = Product.new(product_params)
     
         if @product.save
             render json:{message:"Product created", product:@product}
@@ -20,14 +21,28 @@ class ProductController < ApplicationController
 
     #Show Food as per Id
     def show
-        @product = Product.find(params[:id])
-        render json: @product
+        begin 
+            @product = Product.find(params[:id])
+            render json: @product
+         rescue ActiveRecord::RecordNotFound
+            render text: "Product Id not found", status: :not_found
+         rescue => e
+            render text: "An error occurred: #{e.message}", status: :unprocessable_entity
+        end
     end
 
     #Show Food list of the Cook
     def show_cook_foods
-        @product = Product.where(cook_id: params[:id])
-        render json: @product
+        begin
+            if Cook.find(params[:id])
+                @product = Product.where(cook_id: params[:id])
+                render json: @product
+            end
+         rescue ActiveRecord::RecordNotFound
+            render text: "Cook Id not found", status: :not_found
+         rescue => e
+            render text: "An error occurred: #{e.message}", status: :unprocessable_entity
+        end
     end
 
     #Update Product
@@ -67,8 +82,8 @@ class ProductController < ApplicationController
     def validate_product
         begin
             cook = Cook.find(params[:cook_id]) # Finding if the cook exist
-            exist = Product.where(name: params[:name], cook_id: cook.id).first #Finding if the cook has the product already!!
-            if exist && exist.cook_id && (params[:id].to_i != exist.id)# exist is checked for nil, Next two checks already food exist but not the same editing item
+            exist = Product.where(name: params[:name], cook_id: cook.id).first # Finding if the cook has the product already!!
+            if exist && exist.cook_id && (params[:id].to_i != exist.id) # exist is checked for nil, Next two condition checks already food exist but not the same editing item
                 render text: "Item already in list"
                 return
             end

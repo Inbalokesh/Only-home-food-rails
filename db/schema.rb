@@ -11,14 +11,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20240212132355) do
+ActiveRecord::Schema.define(:version => 20240213121925) do
 
   create_table "cooks", :force => true do |t|
     t.string   "first_name"
     t.string   "last_name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "email"
   end
+
+  add_index "cooks", ["email"], :name => "index_cooks_on_email", :unique => true
 
   create_table "orders", :force => true do |t|
     t.string   "order_status",     :null => false
@@ -29,7 +32,6 @@ ActiveRecord::Schema.define(:version => 20240212132355) do
     t.integer  "user_id",          :null => false
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
-    t.integer  "total_price",      :null => false
   end
 
   create_table "products", :force => true do |t|
@@ -38,10 +40,10 @@ ActiveRecord::Schema.define(:version => 20240212132355) do
     t.string   "quantity_type", :null => false
     t.integer  "quantity",      :null => false
     t.integer  "stock",         :null => false
-    t.integer  "price",         :null => false
     t.integer  "cook_id",       :null => false
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.integer  "price"
   end
 
   create_table "users", :force => true do |t|
@@ -50,7 +52,8 @@ ActiveRecord::Schema.define(:version => 20240212132355) do
     t.string   "password_digest"
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
-    t.boolean  "role"
+    t.boolean  "is_admin"
+    t.string   "email"
   end
 
   add_index "users", ["mobile_number"], :name => "mobile_number_UNIQUE", :unique => true

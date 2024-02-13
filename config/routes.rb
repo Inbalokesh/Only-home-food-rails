@@ -62,9 +62,9 @@ LibraryManagementApp::Application.routes.draw do
 
   post "/login", to:"session#create"
 
-  put "/admin/create/:id", to:"user#update_role"
+  put "/admin/:id", to:"user#make_admin"
   
-  resources :user, only: [:index, :create, :show, :update, :destroy, :team]
+  resources :user
   resources :cook
   resources :product
   resources :order

@@ -1,7 +1,7 @@
 class Order < ActiveRecord::Base
   # attr_accessible :title, :body
 
-  attr_accessible :id, :address, :order_status, :quantity_ordered, :total_price, :delivery_time, :product_id, :user_id
+  attr_accessible :id, :address, :order_status, :quantity_ordered, :delivery_time, :product_id, :user_id
 
   belongs_to :user
   belongs_to :product
@@ -10,7 +10,6 @@ class Order < ActiveRecord::Base
   validates :order_status, inclusion: { in: ["Delivered", "Not-delivered", "Cancelled"], message: "%{value} is not a valid order status" }
   validates :product_id, numericality: { only_integer: true, message: "must be an integer" }
   validates :user_id, numericality: { only_integer: true, message: "must be an integer" }
-  validates :total_price, numericality: { only_integer: true, message: "must be an integer" }
   validates :quantity_ordered, numericality: { only_integer: true, message: "must be an integer" }
   validates :quantity_ordered, inclusion: { in: 1..10, message: "must be between 10 and 1500" }
 

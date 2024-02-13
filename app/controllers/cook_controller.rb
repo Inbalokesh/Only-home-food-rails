@@ -18,8 +18,14 @@ class CookController < ApplicationController
 
     #Show cook as per Id
     def show
-        @cook = Cook.find(params[:id])
-        render json: @cook
+        begin
+          @cook = Cook.find(params[:id])
+          render json: @cook
+         rescue ActiveRecord::RecordNotFound
+            render text: "Cook Id not found", status: :not_found
+         rescue => e
+            render text: "An error occurred: #{e.message}", status: :unprocessable_entity
+        end
     end
 
     #Update cook
@@ -57,7 +63,7 @@ class CookController < ApplicationController
     private
     # Get all the cook details from the params
     def cook_params
-        params.slice(:first_name, :last_name)
+        params.slice(:first_name, :last_name, :email)
     end
 
 end

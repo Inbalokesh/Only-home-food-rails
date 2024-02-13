@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  before_filter :check_is_admin, only: :update_role
+  before_filter :check_is_admin
 
   def current_user
     current_user_id = session[:current_user]
@@ -15,11 +15,11 @@ class ApplicationController < ActionController::Base
   private 
 
   def check_is_admin
-    user_id = session[:current_user]
+    user_id = 1
     begin 
       if user_id
         @user = User.find(user_id)
-        if @user && @user.role?
+        if @user && @user.is_admin?
           return true
         else
           render json: {Warning: "You are not Authorized"}

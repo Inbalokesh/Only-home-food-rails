@@ -1,4 +1,5 @@
 class OrderController < ApplicationController
+    skip_before_filter :check_is_admin, only: [:create, :update, :show, :show_user_orders]
     before_filter :validate_order, only: :create
 
     # View all orders
@@ -12,7 +13,7 @@ class OrderController < ApplicationController
         @order = Order.new(order_params) # Set new order with the details from the params
         
         if @order.save
-            @product = Product.find(@order.product_id) #find the product 
+            @product = Product.find(@order.product_id) # Find the product 
             stock = @product.stock
             stock = stock - @order.quantity_ordered
             @product.stock = stock # Reduce the stock accordingly
@@ -30,14 +31,28 @@ class OrderController < ApplicationController
 
     #Show Order as per Id
     def show
-        @order = Order.find(params[:id])
-        render json: @order
+        begin
+            @order = Order.find(params[:id])
+            render json: @order
+         rescue ActiveRecord::RecordNotFound
+            render text: "Order Id not found", status: :not_found
+         rescue => e
+            render text: "An error occurred: #{e.message}", status: :unprocessable_entity
+        end
     end
 
     #Show Order list of the User
     def show_user_orders
-        @order = Order.where(user_id: params[:id])
-        render json: @order
+        begin 
+            if User.find(params[:id])
+                @order = Order.where(user_id: params[:id])
+                render json: @order
+            end
+         rescue ActiveRecord::RecordNotFound
+            render text: "User Id not found", status: :not_found
+         rescue => e
+            render text: "An error occurred: #{e.message}", status: :unprocessable_entity
+        end
     end
 
     #Update Order
@@ -45,7 +60,7 @@ class OrderController < ApplicationController
         begin
             @order = Order.find(params[:id])
             if @order.update_attributes(order_status: params[:order_status])
-                render text: "Order Updated Sucessfully"      
+                render json: {Message: "Order Updated Sucessfully", Order: @order}    
             else
                 render json: {errors: @order.errors.full_messages }
             end
@@ -76,7 +91,7 @@ class OrderController < ApplicationController
     # Validating while creating the order
     def validate_order
         begin
-            user = User.find(params[:user_id])# Finding the user exist
+            user = User.find(params[:user_id]) # Finding the user exist
             product = Product.find(params[:product_id]) # Finding if the product exist
             if user && product # Checking whether it is nil
                 if product.stock > 7 || product.stock <=0 || product.stock < params[:quantity_ordered].to_i # Checking stock with default value and the quantity_ordered
@@ -94,7 +109,7 @@ class OrderController < ApplicationController
     private
     # Get all the order details from the params
     def order_params
-        params.slice(:id, :address, :order_status, :quantity_ordered, :total_price, :delivery_time, :product_id, :user_id)
+        params.slice(:id, :address, :order_status, :quantity_ordered, :delivery_time, :product_id, :user_id)
     end
 
 end
