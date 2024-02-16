@@ -1,9 +1,9 @@
-class UserController < ApplicationController
+class UsersController < ApplicationController
     skip_before_filter :check_is_admin, only: [:create, :update, :show]
     # View all users
     def index
         @users = User.all
-        render json: {user:@users}
+        render json: {users:@users}
     end
 
     # Create user

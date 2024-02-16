@@ -64,7 +64,7 @@ LibraryManagementApp::Application.routes.draw do
 
   put "/admin/:id", to:"user#make_admin"
   
-  resources :user
+  resources :users
   resources :cook
   resources :product
   resources :order

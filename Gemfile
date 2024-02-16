@@ -13,6 +13,7 @@ gem 'byebug'
 
 gem 'bcrypt'
 
+gem 'active_model_serializers', '~> 0.8.1'
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
 
