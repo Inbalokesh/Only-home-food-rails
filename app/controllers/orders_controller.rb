@@ -1,11 +1,11 @@
-class OrderController < ApplicationController
-    skip_before_filter :check_is_admin, only: [:create, :update, :show, :show_user_orders]
+class OrdersController < ApplicationController
+    skip_before_filter :check_is_admin, only: [:index, :create, :update, :show, :show_user_orders]
     before_filter :validate_order, only: :create
 
     # View all orders
      def index
         @orders = Order.all
-        render json: @orders
+        render json: {data: orders_json(@orders)}
     end
 
     # Create Order
@@ -46,7 +46,7 @@ class OrderController < ApplicationController
         begin 
             if User.find(params[:id])
                 @order = Order.where(user_id: params[:id])
-                render json: @order
+                render json: {data: orders_json(@order)}
             end
          rescue ActiveRecord::RecordNotFound
             render text: "User Id not found", status: :not_found
@@ -103,6 +103,25 @@ class OrderController < ApplicationController
             render text: "User Or Product not found", status: :not_found
          rescue => e
             render text: "An error occurred: #{e.message}", status: :unprocessable_entity
+        end
+    end
+
+    private
+
+    def orders_json(orders)
+        orders.map do |order|
+          {
+            id: order.id.to_s,
+            type: 'orders',
+            attributes: {
+                order_status: order.order_status,
+                address: order.address,
+                quantity_ordered: order.quantity_ordered,
+                delivery_time: order.delivery_time,
+                product_id: order.product_id,
+                user_id: order.user_id
+            }
+          }
         end
     end
 

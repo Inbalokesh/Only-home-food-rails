@@ -60,6 +60,8 @@ class CookController < ApplicationController
         end
     end
 
+    
+
     private
     # Get all the cook details from the params
     def cook_params

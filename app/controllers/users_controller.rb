@@ -1,9 +1,11 @@
 class UsersController < ApplicationController
+    skip_before_filter :verify_authenticity_token, only: [:destroy]
+
     skip_before_filter :check_is_admin, only: [:create, :update, :show]
     # View all users
     def index
         @users = User.all
-        render json: {users:@users}
+        render json: {users:@users, current_user_id: current_user.id}
     end
 
     # Create user
@@ -25,7 +27,8 @@ class UsersController < ApplicationController
     def show
         begin 
             @user = User.find(params[:id])
-            render json: @user
+            # @order = Order.where(user_id: params[:id])
+            render json: {data: user_json(@user)}
          rescue ActiveRecord::RecordNotFound
             render text: "User Id not found", status: :not_found
          rescue => e
@@ -36,7 +39,8 @@ class UsersController < ApplicationController
     #Update User
     def update
         begin
-            @user = User.find(params[:id])
+            puts session[:current_user]
+            @user = User.find(current_user.id)
             if @user.update_attributes(name: params[:name])
                 render text: "User Updated Sucessfully"      
             else
@@ -55,8 +59,13 @@ class UsersController < ApplicationController
 
     # Delete User
     def destroy
+        if current_user
+            puts "Current User ID: #{current_user.id}"
+        else
+            puts "No User"
+        end
         begin
-            @user = User.find(params[:id])
+            @user = User.find(current_user.id)
             if @user.destroy
               render text: "User deleted successfully"
             else
@@ -90,8 +99,38 @@ class UsersController < ApplicationController
     end
 
     private
+
+    def users_json(users)
+        users.map do |user|
+          {
+            id: user.id.to_s,
+            type: 'users',
+            attributes: {
+              name: user.name,
+              email: user.email,
+              mobile_number: user.mobile_number
+            }
+          }
+        end
+    end
+
+    private
+
+    def user_json(user)
+    {
+        id: user.id.to_s,
+        type: 'users',
+        attributes: {
+        name: user.name,
+        email: user.email,
+        mobile_number: user.mobile_number
+        }
+    }
+    end
+
+    private
     # Get all the user details from the params
     def user_params
-        params.slice(:name, :mobile_number, :password, :is_admin, :email)
+        params.slice(:name, :mobile_number, :password, :is_admin, :email, :image)
     end
 end

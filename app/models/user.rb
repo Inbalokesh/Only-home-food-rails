@@ -1,7 +1,7 @@
 require 'bcrypt'
 
 class User < ActiveRecord::Base
-  attr_accessible :id, :name, :mobile_number, :password, :is_admin, :email
+  attr_accessible :id, :name, :mobile_number, :password, :is_admin, :email, :image
   has_many :orders
   has_many :products, through: :orders
 

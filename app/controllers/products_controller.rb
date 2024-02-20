@@ -1,11 +1,17 @@
-class ProductController < ApplicationController
+class ProductsController < ApplicationController
     skip_before_filter :check_is_admin, only: [:index, :show, :show_cook_foods]
     before_filter :validate_product, only: [:create, :update]
 
     # View all products
     def index
+        if current_user
+            puts "Current User ID: #{current_user.id}"
+        else
+            puts "No User"
+        end
+
         @products = Product.all
-        render json: @products
+        render json: { data: products_json(@products) }
     end
 
     # Create product
@@ -95,8 +101,29 @@ class ProductController < ApplicationController
     end
 
     private
+
+    def products_json(products)
+        products.map do |product|
+          {
+            id: product.id.to_s,
+            type: 'products',
+            attributes: {
+              name: product.name,
+              image: product.image,
+              food_type: product.food_type,
+              stock: product.stock,
+              price: product.price,
+              quantity: product.quantity,
+              quantity_type: product.quantity_type,
+              cook_id: product.cook_id
+            }
+          }
+        end
+    end
+
+    private
     # Get all the product details from the params
     def product_params
-        params.slice(:id, :name, :food_type, :quantity_type, :quantity, :stock, :price, :cook_id)
+        params.slice(:id, :name, :food_type, :quantity_type, :quantity, :stock, :price, :cook_id, :image)
     end
 end

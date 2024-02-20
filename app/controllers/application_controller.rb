@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
   private 
 
   def check_is_admin
-    user_id = 1
+    user_id = session[:current_user]
     begin 
       if user_id
         @user = User.find(user_id)

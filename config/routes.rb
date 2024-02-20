@@ -56,17 +56,17 @@ LibraryManagementApp::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
-  get "/product/cook/:id", to:"product#show_cook_foods"
+  get "/products/cook/:id", to:"products#show_cook_foods"
 
-  get "/order/user/:id", to:"order#show_user_orders"
+  get "/user-orders/:id", to:"orders#show_user_orders"
 
   post "/login", to:"session#create"
 
-  put "/admin/:id", to:"user#make_admin"
+  put "/admin/:id", to:"users#make_admin"
   
   resources :users
-  resources :cook
-  resources :product
-  resources :order
+  resources :cooks
+  resources :products
+  resources :orders
 
 end

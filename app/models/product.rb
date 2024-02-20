@@ -1,6 +1,6 @@
 class Product < ActiveRecord::Base
   # attr_accessible :title, :body
-  attr_accessible :id, :name, :quantity, :quantity_type, :price, :stock, :cook_id, :food_type
+  attr_accessible :id, :name, :quantity, :quantity_type, :price, :stock, :cook_id, :food_type, :image
 
   belongs_to :cook
 

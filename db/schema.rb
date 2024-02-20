@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20240213121925) do
+ActiveRecord::Schema.define(:version => 20240219112039) do
 
   create_table "cooks", :force => true do |t|
     t.string   "first_name"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(:version => 20240213121925) do
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
     t.integer  "price"
+    t.string   "image"
   end
 
   create_table "users", :force => true do |t|
@@ -54,6 +55,7 @@ ActiveRecord::Schema.define(:version => 20240213121925) do
     t.datetime "updated_at",      :null => false
     t.boolean  "is_admin"
     t.string   "email"
+    t.string   "image"
   end
 
   add_index "users", ["mobile_number"], :name => "mobile_number_UNIQUE", :unique => true
