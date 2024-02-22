@@ -1,5 +1,5 @@
 class ProductsController < ApplicationController
-    skip_before_filter :check_is_admin, only: [:index, :show, :show_cook_foods]
+    skip_before_filter :check_is_admin, only: [:index, :create, :update, :destroy, :show, :show_cook_foods]
     before_filter :validate_product, only: [:create, :update]
 
     # View all products
@@ -56,14 +56,14 @@ class ProductsController < ApplicationController
         begin
             @product = Product.find(params[:id])
             if @product.update_attributes(params[:product])
-                render text: "Product Updated Sucessfully"      
+                render json: { data: { message: "Updated Successfully" } }, status: :ok
             else
-                render json: {errors: @product.errors.full_messages }
+                render json: { errors: [{ detail: @product.error.full_messages }] }, status: :unprocessable_entity
             end
           rescue ActiveRecord::RecordNotFound
-            render text: "Product Id not found", status: :not_found
+            render json: { errors: [{ detail: "Product Id not found" }] }, status: :not_found
           rescue => e
-            render text: "An error occurred: #{e.message}", status: :unprocessable_entity
+            render json: { errors: [{ detail: e.message }] }, status: :unprocessable_entity
         end
     end
 
@@ -72,14 +72,14 @@ class ProductsController < ApplicationController
         begin
             @product = Product.find(params[:id])
             if @product.destroy
-              render text: "Product deleted successfully"
+                render json: { data: { message: "Deleted Successfully" } }, status: :ok
             else
-              render text: "Error in deleting product"
+                render json: { errors: [{ detail: "Failed to delete product" }] }, status: :unprocessable_entity
             end
           rescue ActiveRecord::RecordNotFound
-            render text: "Product id not found", status: :not_found
-          rescue => e
-            render text: "An error occurred: #{e.message}", status: :unprocessable_entity
+            render json: { errors: [{ detail: "Product Id not found" }] }, status: :not_found
+        rescue => e
+            render json: { errors: [{ detail: e.message }] }, status: :unprocessable_entity
         end
     end
 
